@@ -1,0 +1,29 @@
+---
+- name: Install the latest version of mariadb
+  yum: name="{{item}}" state=present
+  loop:
+    - MySQL-python
+    - mariadb-server
+
+- name: enable mariadb service
+  systemd:
+    enabled: yes
+    name: mariadb
+
+- name: start mariadb service
+  systemd:
+    name: mariadb
+    state: started
+
+- name: create admin user with password
+  mysql_user:
+    name: "{{DB_USER}}"
+    host: '%'
+    password: "{{DB_PASSWORD}}"
+    priv: '*.*:ALL'
+    state: present
+
+- name: create database 
+  mysql_db:
+    name: "{{DB_NAME}}"
+    state: present
